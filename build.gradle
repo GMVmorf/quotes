@@ -1,0 +1,71 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+    id "org.jetbrains.kotlin.plugin.allopen" version "1.3.72"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.3.72"
+    id "org.jetbrains.kotlin.plugin.noarg" version "1.3.72"
+
+    id "org.springframework.boot" version "2.3.0.RELEASE"
+
+    id "net.foragerr.jmeter" version "1.1.0-4.0"
+}
+
+group 'ru.mgprojects'
+version '1.0-SNAPSHOT'
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    compile "org.springframework.boot:spring-boot-starter-data-jpa:2.3.0.RELEASE"
+    compile "org.springframework.boot:spring-boot-starter-web:2.3.0.RELEASE"
+    compile 'javax.validation:validation-api:2.0.0.Final'
+    compile 'org.hibernate:hibernate-validator:6.0.10.Final'
+
+    compile "com.h2database:h2:1.4.200"
+
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.9"
+
+    compile 'io.springfox:springfox-swagger2:2.9.2'
+    compile 'io.springfox:springfox-swagger-ui:2.9.2'
+}
+
+noArg {
+    annotation("javax.persistence.Entity")
+}
+
+apply plugin: 'kotlin'
+
+bootJar {
+    mainClassName = 'ru.mgprojects.Application'
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+//  Fixed: Jmeter bug
+task copyLog4j2(type: Copy) {
+    from file("src/test/resources/jmeter/log4j2.xml")
+    into file("$buildDir/jmeter/bin")
+}
+
+build {
+    dependsOn copyLog4j2
+}
+
+//  Performance tests
+jmeter {
+    jmTestFiles = [file("src/test/resources/jmeter/elvls.jmx")]
+    jmSystemPropertiesFiles= [file("src/test/resources/jmeter/jmeter.properties")]
+    //produce Graphical and CSV reports
+    enableExtendedReports = true
+}

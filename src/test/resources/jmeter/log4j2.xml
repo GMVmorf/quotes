@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="30" status="error">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <!-- Яркий лог -->
+            <PatternLayout pattern="%highlight{%d} [%t] %highlight{%-5level: } %style{%msg}{black} - %style{%C[%M]}{FG_White}%n%throwable" />
+        </Console>
+
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Console" />
+        </Root>
+    </Loggers>
+
+</Configuration>
